@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: librarian-prod-demo-devlake-webhook
+  namespace: argocd
+
+  annotations:
+    notifications.argoproj.io/subscribe.on-sync-succeeded.webhook: devlake
+    notifications.argoproj.io/subscribe.on-sync-failed.webhook: devlake
+
+spec:
+  project: default
+
+# declare which helm values that we watch for changes, 
+
+  source:
+    repoURL: https://github.com/anlehoang1707/argo-examples-demo
+    path: helm-webapp
+    targetRevision: HEAD
+
+    helm:
+      valueFiles:
+        - values.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: prod
